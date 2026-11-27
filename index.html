@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CampusConnect — Lost & Found</title>
+<style>
+:root{--ink:#182230;--muted:#64748b;--blue:#3157d5;--bg:#f4f7fb;--line:#e3e9f2;--green:#16835f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#fff;border-bottom:1px solid var(--line);padding:18px max(22px,calc((100% - 1120px)/2));display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{font-size:21px;font-weight:800;letter-spacing:-.5px}.brand span{color:var(--blue)}.tag{color:var(--muted);font-size:13px}
+main{max-width:1120px;margin:30px auto;padding:0 20px}.hero{background:linear-gradient(120deg,#1c2d68,#3157d5);color:white;border-radius:20px;padding:30px;display:flex;align-items:center;justify-content:space-between;gap:20px}.hero h1{font-size:clamp(27px,4vw,40px);line-height:1.1;margin:0 0 10px;letter-spacing:-1px}.hero p{margin:0;color:#e0e7ff;max-width:570px}.hero .emoji{font-size:64px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}.stat,.panel,.item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px}.stat b{font-size:26px;display:block}.stat span{color:var(--muted);font-size:13px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.toolbar input,.toolbar select,.field input,.field select,.field textarea{width:100%;border:1px solid #d7dfeb;border-radius:9px;padding:11px 12px;background:white;font:inherit;color:var(--ink)}.toolbar input{flex:1;min-width:210px}.toolbar select{width:auto;min-width:150px}
+button{border:0;border-radius:9px;padding:11px 15px;background:var(--blue);color:white;font:600 14px inherit;cursor:pointer}button.secondary{background:#edf1ff;color:#2947b7}button.danger{background:#fff0f0;color:#b42318}.layout{display:grid;grid-template-columns:1fr 320px;gap:18px}.section-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px}.section-head h2{margin:0;font-size:20px}.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.item{padding:0;overflow:hidden}.item-top{height:90px;background:linear-gradient(135deg,#e4eaff,#f2f5ff);display:flex;align-items:center;justify-content:center;font-size:35px}.item-body{padding:15px}.pill{display:inline-block;font-size:11px;font-weight:700;border-radius:30px;padding:4px 8px;background:#e7f7ef;color:#16734f}.pill.lost{background:#fff0e8;color:#b54708}.item h3{margin:9px 0 4px;font-size:17px}.item p{margin:4px 0;color:var(--muted);font-size:13px}.item-foot{display:flex;justify-content:space-between;align-items:center;margin-top:13px;gap:8px}.item-foot small{color:var(--muted)}.panel h2{margin:0 0 12px;font-size:19px}.field{margin:12px 0}.field label{display:block;font-size:13px;font-weight:650;margin-bottom:5px}.field textarea{resize:vertical;min-height:75px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{width:100%}.empty{padding:35px;text-align:center;color:var(--muted);background:#fff;border:1px dashed #cbd5e1;border-radius:14px;grid-column:1/-1}.note{font-size:12px;color:var(--muted);margin-top:10px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#172033;color:#fff;padding:12px 18px;border-radius:10px;display:none;box-shadow:0 10px 30px #0002}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:30px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.list{grid-template-columns:1fr 1fr}.hero .emoji{display:none}}
+@media(max-width:500px){.stats{grid-template-columns:1fr}.list{grid-template-columns:1fr}.hero{padding:24px}.field-row{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
+</style></head>
+<body>
+<header><div><div class="brand">Campus<span>Connect</span></div><div class="tag">A little help goes a long way.</div></div><div class="tag">Student Lost & Found Portal</div></header>
+<main>
+<section class="hero"><div><h1>Lost something?<br>Found something?</h1><p>Help your campus community reunite people with their belongings. Browse reports or add a lost/found item in seconds.</p></div><div class="emoji">🎒</div></section>
+<section class="stats"><div class="stat"><b id="totalStat">0</b><span>Total reports</span></div><div class="stat"><b id="lostStat">0</b><span>Items reported lost</span></div><div class="stat"><b id="foundStat">0</b><span>Items found</span></div></section>
+<div class="toolbar"><input id="search" placeholder="Search item, location or description…" aria-label="Search reports"><select id="filter"><option value="all">All reports</option><option value="Lost">Lost items</option><option value="Found">Found items</option></select><select id="category"><option value="all">All categories</option><option>Electronics</option><option>Books</option><option>Accessories</option><option>Clothing</option><option>Other</option></select><button id="resetBtn" class="secondary">Reset demo</button></div>
+<div class="layout"><section><div class="section-head"><h2>Community reports</h2><span class="tag" id="resultCount"></span></div><div class="list" id="items"></div></section>
+<aside class="panel"><h2>Post a report</h2><form id="reportForm"><div class="field"><label for="kind">Report type</label><select id="kind" required><option>Lost</option><option>Found</option></select></div><div class="field"><label for="title">Item name</label><input id="title" required maxlength="60" placeholder="e.g. Blue water bottle"></div><div class="field-row"><div class="field"><label for="cat">Category</label><select id="cat"><option>Electronics</option><option>Books</option><option>Accessories</option><option>Clothing</option><option>Other</option></select></div><div class="field"><label for="place">Location</label><input id="place" required maxlength="60" placeholder="e.g. Library"></div></div><div class="field"><label for="date">Date</label><input id="date" type="date" required></div><div class="field"><label for="description">Description</label><textarea id="description" maxlength="240" placeholder="Colour, brand, distinguishing details…"></textarea></div><div class="field"><label for="contact">Contact details</label><input id="contact" required maxlength="80" placeholder="Email or phone"></div><button class="full" type="submit">＋ Publish report</button></form><p class="note">Demo app: reports are saved only in this browser using localStorage. Avoid entering sensitive personal information.</p></aside></div>
+</main><footer>CampusConnect · Student project demo · Browser-based storage</footer><div class="toast" id="toast" role="status"></div>
+<script>
+const starter=[
+{id:1,kind:"Lost",title:"Black wireless earbuds",cat:"Electronics",place:"CSE Block, 2nd Floor",date:"2026-10-19",description:"Small black case, possibly left near the lab entrance.",contact:"owner@example.com",icon:"🎧"},
+{id:2,kind:"Found",title:"Blue water bottle",cat:"Accessories",place:"Central Library",date:"2026-10-20",description:"Blue steel bottle with a small sticker on the side.",contact:"library@example.com",icon:"🧴"},
+{id:3,kind:"Lost",title:"Data Structures notebook",cat:"Books",place:"Room 304",date:"2026-10-18",description:"Spiral notebook with handwritten DSA notes.",contact:"student@example.com",icon:"📓"},
+{id:4,kind:"Found",title:"Grey hoodie",cat:"Clothing",place:"Sports Ground",date:"2026-10-17",description:"Grey hoodie found on the bench beside the court.",contact:"sportsdesk@example.com",icon:"🧥"}
+];
+const icons={Electronics:"🎧",Books:"📚",Accessories:"🎒",Clothing:"🧥",Other:"📦"};
+let reports;try{reports=JSON.parse(localStorage.getItem("campusconnect_reports"))}catch(e){reports=null}
+if(!Array.isArray(reports))reports=starter;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("campusconnect_reports",JSON.stringify(reports))}
+function toast(msg){$("toast").textContent=msg;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2400)}
+function render(){
+const q=$("search").value.toLowerCase().trim(), f=$("filter").value,c=$("category").value;
+$("totalStat").textContent=reports.length;$("lostStat").textContent=reports.filter(x=>x.kind==="Lost").length;$("foundStat").textContent=reports.filter(x=>x.kind==="Found").length;
+const data=reports.filter(x=>(f==="all"||x.kind===f)&&(c==="all"||x.cat===c)&&[x.title,x.place,x.description,x.cat].join(" ").toLowerCase().includes(q)).sort((a,b)=>b.id-a.id);
+$("resultCount").textContent=`${data.length} shown`;
+$("items").innerHTML=data.length?data.map(x=>`<article class="item"><div class="item-top">${icons[x.cat]||"📦"}</div><div class="item-body"><span class="pill ${x.kind==="Lost"?"lost":""}">${x.kind}</span><h3>${escapeHTML(x.title)}</h3><p>📍 ${escapeHTML(x.place)}</p><p>📅 ${escapeHTML(x.date)}</p><p>${escapeHTML(x.description||"No extra details provided.")}</p><div class="item-foot"><small>${escapeHTML(x.cat)}</small><button class="secondary" onclick="showContact(${x.id})">View contact</button></div></div></article>`).join(""):'<div class="empty">No matching reports. Try another search or add a report.</div>';
+}
+function escapeHTML(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function showContact(id){const x=reports.find(r=>r.id===id);if(x)toast("Contact: "+x.contact)}
+$("reportForm").addEventListener("submit",e=>{e.preventDefault();const r={id:Date.now(),kind:$("kind").value,title:$("title").value.trim(),cat:$("cat").value,place:$("place").value.trim(),date:$("date").value,description:$("description").value.trim(),contact:$("contact").value.trim()};if(!r.title||!r.place||!r.date||!r.contact)return;reports.unshift(r);save();render();e.target.reset();$("date").value=new Date().toISOString().slice(0,10);toast("Report published in this browser.")});
+["search","filter","category"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
+$("resetBtn").addEventListener("click",()=>{if(confirm("Restore the sample reports and remove your local demo reports?")){reports=starter.map(x=>({...x}));save();render();toast("Demo data restored.")}});
+$("date").value=new Date().toISOString().slice(0,10);save();render();
+</script></body></html>
